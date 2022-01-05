@@ -1,0 +1,128 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>{{ name }}</title>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+
+                fetch("https://www.balldontlie.io/api/v1/players?search={{name}}")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    const id = data.data[0].id;
+                    const first_name = data.data[0].first_name;
+                    const last_name = data.data[0].last_name;
+                    const position = data.data[0].position;
+                    const height_feet = data.data[0].height_feet;
+                    const height_inches = data.data[0].height_inches;
+                    const weight = data.data[0].weight_pounds;
+                    const team = data.data[0].team.full_name;
+
+                    document.querySelector('#name').innerHTML = first_name + " " + last_name;
+                    document.querySelector('#team').innerHTML = team
+                    document.querySelector('#position').innerHTML = first_name + " " + last_name + " plays position(s) " + position;
+                    document.querySelector('#height').innerHTML = "Height: " + height_feet + " foot " + height_inches + " inches";
+                    document.querySelector('#weight').innerHTML = "Weight: " + weight + " pounds";
+
+                    fetch("https://www.balldontlie.io/api/v1/season_averages?player_ids[]=" + id)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            const season = data.data[0].season;
+                            const fgm = data.data[0].fgm;
+                            const fga = data.data[0].fga;
+                            const fta = data.data[0].fta;
+                            const oreb = data.data[0].oreb;
+                            const dreb = data.data[0].dreb;
+                            const ast = data.data[0].ast;
+                            const stl = data.data[0].stl;
+                            const blk = data.data[0].blk;
+                            const turnover = data.data[0].turnover;
+                            const pts = data.data[0].pts;
+                            const fgp = data.data[0].fg_pct;
+                            const ftp= data.data[0].ft_pct;
+
+                            document.querySelector('#averages_title').innerHTML = "Averages for the " + season + " season:";
+                            document.querySelector('#fgm').innerHTML = "fgm: " + fgm;
+                            document.querySelector('#fga').innerHTML = "fga: " + fga;
+                            document.querySelector('#fta').innerHTML = "fta: " + fta;
+                            document.querySelector('#oreb').innerHTML = "oreb: " + oreb;
+                            document.querySelector('#dreb').innerHTML = "dreb: " + dreb;
+                            document.querySelector('#ast').innerHTML = "ast: " + ast;
+                            document.querySelector('#stl').innerHTML = "stl: " + stl;
+                            document.querySelector('#blk').innerHTML = "blk: " + blk;
+                            document.querySelector('#tnv').innerHTML = "tnv: " + turnover;
+                            document.querySelector('#ppg').innerHTML = "ppg: " + pts;
+                            document.querySelector('#fgp').innerHTML = "fg%: " + fgp;
+                            document.querySelector('#ftp').innerHTML = "ft%: " + ftp;
+
+                            document.querySelector('#image').src = "https://nba-players.herokuapp.com/players/"+last_name+"/"+first_name;
+
+                        });
+                });
+
+
+
+
+            });
+
+        </script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="{% static 'stats/styles.css' %}" rel="stylesheet">
+    </head>
+    <body>
+        <div class="row">
+            <div class="sidebar col-lg-2 col-md-3">
+                <h2>NBA Stats</h2>
+                <form action="{% url 'search' %}" method="GET" >
+                    <input class="search" type="text" name="q" placeholder="Search Players">
+                    <input type="submit" value="Search">
+                </form>
+
+
+
+            </div>
+
+            <div class="main col-lg-10 col-md-9">
+                <h1 id="name"></h1>
+                <h3 id = "team"></h3>
+                <h5 id = "position"></h5>
+                <h6 id = "height"></h6>
+                <h6 id = "weight"></h6>
+
+                <img id="image" src="">
+                <h2 id = 'averages_title'></h2>
+                <table id = "table" >
+
+                    <tr>
+                        <th id = "fgm"></th>
+                        <th id = "fga"></th>
+                        <th id = "fta"></th>
+                    </tr>
+                    <tr>
+                        <th id = "oreb"></th>
+                        <th id = "dreb"></th>
+                        <th id = "ast"></th>
+                    </tr>
+                    <tr>
+                        <th id = 'stl'></th>
+                        <th id = 'blk'></th>
+                        <th id = 'tnv'></th>
+                    </tr>
+                    <tr>
+                        <th id = 'ppg'></th>
+                        <th id = 'fgp'></th>
+                        <th id = 'ftp'></th>
+                    </tr>
+                </table>
+
+            </div>
+
+
+        </div>
+
+    </body>
+</html>
